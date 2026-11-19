@@ -1,0 +1,43 @@
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build mod
+        run: ./gradlew build
+
+      - name: Find release JAR
+        shell: bash
+        run: |
+          JAR=$(find build/libs -maxdepth 1 -name 'spotifylyrics-*.jar' ! -name '*-sources.jar' ! -name '*-dev.jar' | head -n 1)
+          test -n "$JAR"
+          echo "RELEASE_JAR=$JAR" >> "$GITHUB_ENV"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.RELEASE_JAR }}
+          generate_release_notes: true

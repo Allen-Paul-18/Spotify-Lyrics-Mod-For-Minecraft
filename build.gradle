@@ -68,6 +68,11 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
+
+	// Bundle SMTC4J inside the mod JAR
+	from(zipTree("libs/SMTC4J-0.0.8.jar")) {
+		exclude "META-INF/**"
+	}
 }
 
 // configure the maven publication
