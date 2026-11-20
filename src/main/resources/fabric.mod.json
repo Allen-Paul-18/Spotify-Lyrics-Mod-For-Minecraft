@@ -19,7 +19,7 @@
 			"com.allen.spotifylyrics.SpotifyLyrics"
 		],
 		"client": [
-			"com.allen.spotifylyrics.client.SpotifyLyricsClient"
+          "com.allen.spotifylyrics.client.UniversalLyricsClient"
 		]
 	},
 	"mixins": [

@@ -4,7 +4,7 @@ package com.allen.spotifylyrics.client;
 import com.allen.spotifylyrics.client.config.SpotifyLyricsConfig;
 import com.allen.spotifylyrics.client.hud.LyricsHud;
 import com.allen.spotifylyrics.client.input.LyricsKeyBindings;
-import com.allen.spotifylyrics.spotify.SpotifyDetector;
+import com.allen.spotifylyrics.spotify.MediaController;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,7 +12,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.resources.Identifier;
 
-public class SpotifyLyricsClient implements ClientModInitializer {
+public class UniversalLyricsClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
@@ -20,11 +20,11 @@ public class SpotifyLyricsClient implements ClientModInitializer {
 		// Load configuration
 		SpotifyLyricsConfig.load();
 
-		// Initialize Spotify detection
-		SpotifyDetector.initialize();
+		// Initialize universal media detection
+		MediaController.initialize();
 
 		// Apply saved lyrics offset
-		SpotifyDetector.setLyricsOffset(
+		MediaController.setLyricsOffset(
 				SpotifyLyricsConfig.getInstance().lyricsOffset
 		);
 
@@ -37,7 +37,7 @@ public class SpotifyLyricsClient implements ClientModInitializer {
 			LyricsKeyBindings.handleInput();
 
 			if (client.level != null) {
-				SpotifyDetector.detectSong();
+				MediaController.detectSong();
 			}
 		});
 
@@ -50,6 +50,6 @@ public class SpotifyLyricsClient implements ClientModInitializer {
 				LyricsHud::render
 		);
 
-		System.out.println("Spotify Lyrics HUD Registered!");
+		System.out.println("Universal Lyrics HUD Registered!");
 	}
 }

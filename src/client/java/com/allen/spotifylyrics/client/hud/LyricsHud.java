@@ -4,7 +4,7 @@ package com.allen.spotifylyrics.client.hud;
 import com.allen.spotifylyrics.client.config.SpotifyLyricsConfig;
 import com.allen.spotifylyrics.spotify.LyricLine;
 import com.allen.spotifylyrics.spotify.LyricsSync;
-import com.allen.spotifylyrics.spotify.SpotifyDetector;
+import com.allen.spotifylyrics.spotify.MediaController;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -31,8 +31,8 @@ public class LyricsHud {
 
         List<String> lines = new ArrayList<>();
 
-        String title = SpotifyDetector.getCurrentTitle();
-        String artist = SpotifyDetector.getCurrentArtist();
+        String title = MediaController.getCurrentTitle();
+        String artist = MediaController.getCurrentArtist();
 
         if (config.showSongTitle && !title.isBlank()) {
             lines.add(title);
@@ -42,20 +42,20 @@ public class LyricsHud {
             lines.add(artist);
         }
 
-        LyricsSync sync = SpotifyDetector.getLyricsSync();
+        LyricsSync sync = MediaController.getLyricsSync();
 
-        if (sync != null) {
+        if (title.isBlank()) {
+            lines.add("Waiting for music...");
+        } else if (sync == null) {
+            lines.add("Fetching lyrics...");
+        } else {
             LyricLine current = sync.getCurrentLyric(
-                    SpotifyDetector.getCurrentPosition()
+                    MediaController.getCurrentPosition()
             );
 
             if (current != null && !current.getText().isBlank()) {
                 lines.add(current.getText());
             }
-        }
-
-        if (lines.isEmpty()) {
-            lines.add("Waiting for Spotify...");
         }
 
         int padding = 8;
@@ -146,7 +146,8 @@ public class LyricsHud {
 
         for (int i = 0; i < lines.size(); i++) {
 
-            int color = (i == lines.size() - 1 && sync != null)
+            int color = (i == lines.size() - 1 && sync != null
+                    && !title.isBlank())
                     ? 0xFF55FF55
                     : 0xFFFFFFFF;
 
